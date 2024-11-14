@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import emptyImg from '../images/terrains/empty.png';
 
 $(document).ready(() => {
     // mark a cell as the currently selected terrain
@@ -6,20 +7,31 @@ $(document).ready(() => {
         setTerrain($(this)[0]);
     })
 
-    function getSelectedTerrain() {
-        const $selectedTerrain = $('input[name="terrain-type-select"]:checked')[0];
-        const value = $selectedTerrain?.value ?? 0;
-        return parseInt(value);
-    }
+    $('.terrain-select').click(function() {
+        let value = $(this);
+        value.prev().click();
+    })
 
     function setTerrain(cell) {
-        const terrain = getSelectedTerrain();
+        let $terrain = getSelectedTerrain();
 
-        if (terrain === parseInt(cell.textContent)) {
-            // Set back to empty if already is set to the terrain. Allows easy toggling.
-            cell.textContent = 0;
-        } else {
-            cell.textContent = terrain;
+        if (! $terrain) {
+            return;
         }
+
+        if ($terrain.value === cell.value) {
+            // Set back to empty if already is set to the terrain. Allows easy toggling.
+            cell.value = 'empty';
+            cell.alt = `cell with terrain set to empty`
+            cell.src = emptyImg
+        } else {
+            cell.value = $terrain.value;
+            cell.alt = `cell with terrain set to ${$terrain.value}`
+            cell.src = $terrain.src;
+        }
+    }
+
+    function getSelectedTerrain() {
+        return $('input[name="terrain-select-group"]:checked').next()[0];
     }
 })
